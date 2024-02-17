@@ -1,0 +1,11 @@
+[gd_resource type="ShaderMaterial" load_steps=3 format=3 uid="uid://bru73uody3k5f"]
+
+[ext_resource type="Shader" path="res://shaders/TileTexture.gdshader" id="1_2owkd"]
+[ext_resource type="Texture2D" uid="uid://8rfnwtrdq3le" path="res://assets/Roofs/Roofs_01-512x512.png" id="2_yoxba"]
+
+[resource]
+render_priority = 0
+shader = ExtResource("1_2owkd")
+shader_parameter/non_repetitive = false
+shader_parameter/uv_scale = 1.0
+shader_parameter/albedo = ExtResource("2_yoxba")

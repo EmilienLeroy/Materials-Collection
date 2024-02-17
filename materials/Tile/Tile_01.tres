@@ -1,0 +1,11 @@
+[gd_resource type="ShaderMaterial" load_steps=3 format=3 uid="uid://c6cs0l07e8t0d"]
+
+[ext_resource type="Shader" path="res://shaders/TileTexture.gdshader" id="1_bwj5g"]
+[ext_resource type="Texture2D" uid="uid://dch7celqmsthh" path="res://assets/Tile/Tile_01-512x512.png" id="2_ir60j"]
+
+[resource]
+render_priority = 0
+shader = ExtResource("1_bwj5g")
+shader_parameter/non_repetitive = false
+shader_parameter/uv_scale = 1.0
+shader_parameter/albedo = ExtResource("2_ir60j")

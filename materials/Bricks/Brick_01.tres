@@ -1,4 +1,9 @@
-// Base on https://www.youtube.com/watch?v=bb60J1VS8rw
+[gd_resource type="ShaderMaterial" load_steps=3 format=3 uid="uid://cv3haocv0pwa2"]
+
+[ext_resource type="Texture2D" uid="uid://c6hqoqfvult2p" path="res://assets/Bricks/Bricks_01-512x512.png" id="1_o5p4m"]
+
+[sub_resource type="Shader" id="Shader_imccg"]
+code = "// Base on https://www.youtube.com/watch?v=bb60J1VS8rw
 // And https://www.shadertoy.com/view/lt2GDd
 
 shader_type spatial;
@@ -71,4 +76,12 @@ void fragment() {
 
     // Output linear color
     ALBEDO = linearColor;
-}
+}"
+
+[resource]
+resource_local_to_scene = true
+render_priority = 0
+shader = SubResource("Shader_imccg")
+shader_parameter/non_repetitive = false
+shader_parameter/uv_scale = 1.0
+shader_parameter/albedo = ExtResource("1_o5p4m")

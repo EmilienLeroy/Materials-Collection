@@ -1,0 +1,11 @@
+[gd_resource type="ShaderMaterial" load_steps=3 format=3 uid="uid://c8cmbwux2y5he"]
+
+[ext_resource type="Shader" path="res://shaders/TileTexture.gdshader" id="1_vg7pt"]
+[ext_resource type="Texture2D" uid="uid://olk3on7uy7o0" path="res://assets/Wood/Wood_01-512x512.png" id="2_rswat"]
+
+[resource]
+render_priority = 0
+shader = ExtResource("1_vg7pt")
+shader_parameter/non_repetitive = false
+shader_parameter/uv_scale = 1.0
+shader_parameter/albedo = ExtResource("2_rswat")

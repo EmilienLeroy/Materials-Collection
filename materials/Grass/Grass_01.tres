@@ -1,0 +1,11 @@
+[gd_resource type="ShaderMaterial" load_steps=3 format=3 uid="uid://bf0iybs8bawvy"]
+
+[ext_resource type="Shader" path="res://shaders/TileTexture.gdshader" id="1_e0ehu"]
+[ext_resource type="Texture2D" uid="uid://cx65rwsrvpqk7" path="res://assets/Grass/Grass_01-512x512.png" id="2_g5xjh"]
+
+[resource]
+render_priority = 0
+shader = ExtResource("1_e0ehu")
+shader_parameter/non_repetitive = false
+shader_parameter/uv_scale = 1.0
+shader_parameter/albedo = ExtResource("2_g5xjh")

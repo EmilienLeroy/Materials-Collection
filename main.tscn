@@ -1,0 +1,142 @@
+[gd_scene load_steps=12 format=3 uid="uid://dwxcb60tciuek"]
+
+[ext_resource type="Material" uid="uid://cv3haocv0pwa2" path="res://materials/Bricks/Brick_01.tres" id="1_piegq"]
+[ext_resource type="Material" uid="uid://bf0iybs8bawvy" path="res://materials/Grass/Grass_01.tres" id="1_scl1g"]
+[ext_resource type="Material" uid="uid://c6cs0l07e8t0d" path="res://materials/Tile/Tile_01.tres" id="2_x8ihm"]
+[ext_resource type="Material" uid="uid://bru73uody3k5f" path="res://materials/Roofs/Roofs_01.tres" id="3_gi1mq"]
+[ext_resource type="Material" uid="uid://c8cmbwux2y5he" path="res://materials/Wood/Wood_01.tres" id="4_kt4go"]
+[ext_resource type="Texture2D" uid="uid://c6hqoqfvult2p" path="res://assets/Bricks/Bricks_01-512x512.png" id="6_pc2yx"]
+
+[sub_resource type="BoxMesh" id="BoxMesh_w0vxq"]
+
+[sub_resource type="PlaneMesh" id="PlaneMesh_85jf2"]
+
+[sub_resource type="Shader" id="Shader_imccg"]
+code = "// Base on https://www.youtube.com/watch?v=bb60J1VS8rw
+// And https://www.shadertoy.com/view/lt2GDd
+
+shader_type spatial;
+
+uniform sampler2D albedo : hint_default_black;
+uniform bool non_repetitive = false;
+uniform float uv_scale = 1;
+
+vec3 srgbToLinear(vec3 srgbColor) {
+    return pow(srgbColor, vec3(2.2));
+}
+ 
+vec4 hash4(vec2 p) { 
+	return fract(
+		sin(
+			vec4(1.0+dot(p,vec2(37.0,17.0)), 
+			2.0+dot(p,vec2(11.0,47.0)),
+			3.0+dot(p,vec2(41.0,29.0)),
+			4.0+dot(p,vec2(23.0,31.0))))*103.0); 
+}
+ 
+vec4 textureNoTile(sampler2D samp, in vec2 uv) {
+	vec2 iuv = floor(uv);
+	vec2 fuv = fract(uv);
+	vec4 ofa = hash4(iuv + vec2(0.0,0.0));
+	vec4 ofb = hash4(iuv + vec2(1.0,0.0));
+	vec4 ofc = hash4(iuv + vec2(0.0,1.0));
+	vec4 ofd = hash4(iuv + vec2(1.0,1.0));
+	vec2 ddx = dFdx(uv);
+	vec2 ddy = dFdy(uv);
+	
+	// transform per-tile uvs
+	ofa.zw = sign(ofa.zw-0.5);
+	ofb.zw = sign(ofb.zw-0.5);
+	ofc.zw = sign(ofc.zw-0.5);
+	ofd.zw = sign(ofd.zw-0.5);
+    
+	// uv's, and derivarives (for correct mipmapping)
+	vec2 uva = uv*ofa.zw + ofa.xy; vec2 ddxa = ddx*ofa.zw; vec2 ddya = ddy*ofa.zw;
+	vec2 uvb = uv*ofb.zw + ofb.xy; vec2 ddxb = ddx*ofb.zw; vec2 ddyb = ddy*ofb.zw;
+	vec2 uvc = uv*ofc.zw + ofc.xy; vec2 ddxc = ddx*ofc.zw; vec2 ddyc = ddy*ofc.zw;
+	vec2 uvd = uv*ofd.zw + ofd.xy; vec2 ddxd = ddx*ofd.zw; vec2 ddyd = ddy*ofd.zw;
+        
+	// fetch and blend
+	vec2 b = smoothstep(0.25,0.75,fuv);
+    
+	return mix(mix( 
+			textureGrad( samp, uva, ddxa, ddya ), 
+            textureGrad( samp, uvb, ddxb, ddyb ), b.x ), 
+            mix( 
+				textureGrad( samp, uvc, ddxc, ddyc ),
+                textureGrad( samp, uvd, ddxd, ddyd ), b.x), b.y 
+			);
+}
+ 
+void fragment() {
+    vec2 uv = UV * uv_scale;
+
+    // Sample the texture
+    vec4 textureSample;
+	
+	if (non_repetitive == true) {
+		textureSample = textureNoTile(albedo, uv);
+	} else {
+		textureSample = texture(albedo, uv);
+	}
+
+    // Convert sRGB color to linear RGB
+    vec3 linearColor = srgbToLinear(textureSample.rgb);
+
+    // Output linear color
+    ALBEDO = linearColor;
+}"
+
+[sub_resource type="ShaderMaterial" id="ShaderMaterial_37fp8"]
+resource_local_to_scene = true
+render_priority = 0
+shader = SubResource("Shader_imccg")
+shader_parameter/non_repetitive = true
+shader_parameter/uv_scale = 15.0
+shader_parameter/albedo = ExtResource("6_pc2yx")
+
+[sub_resource type="ShaderMaterial" id="ShaderMaterial_q5fhl"]
+resource_local_to_scene = true
+render_priority = 0
+shader = SubResource("Shader_imccg")
+shader_parameter/non_repetitive = false
+shader_parameter/uv_scale = 15.0
+shader_parameter/albedo = ExtResource("6_pc2yx")
+
+[node name="Main" type="Node3D"]
+transform = Transform3D(1.00523, 0, 0, 0, 1.00523, 0, 0, 0, 1.00523, 0, 0, 0)
+
+[node name="MeshInstance3D" type="MeshInstance3D" parent="."]
+transform = Transform3D(10.0234, 0, 0, 0, 10.0234, 0, 0, 0, 10.0234, 15, 2.08165e-12, 2.08165e-12)
+mesh = SubResource("BoxMesh_w0vxq")
+surface_material_override/0 = ExtResource("1_scl1g")
+
+[node name="MeshInstance3D2" type="MeshInstance3D" parent="."]
+transform = Transform3D(10.0234, 0, 0, 0, 10.0234, 0, 0, 0, 10.0234, -15, 2.08165e-12, 2.08165e-12)
+mesh = SubResource("BoxMesh_w0vxq")
+surface_material_override/0 = ExtResource("2_x8ihm")
+
+[node name="MeshInstance3D3" type="MeshInstance3D" parent="."]
+transform = Transform3D(10.0234, 0, 0, 0, 10.0234, 0, 0, 0, 10.0234, 0, 0, 0)
+mesh = SubResource("BoxMesh_w0vxq")
+surface_material_override/0 = ExtResource("3_gi1mq")
+
+[node name="MeshInstance3D4" type="MeshInstance3D" parent="."]
+transform = Transform3D(10.0234, 0, 0, 0, 10.0234, 0, 0, 0, 10.0234, -30, 2.08165e-12, 2.08165e-12)
+mesh = SubResource("BoxMesh_w0vxq")
+surface_material_override/0 = ExtResource("4_kt4go")
+
+[node name="MeshInstance3D5" type="MeshInstance3D" parent="."]
+transform = Transform3D(10.0234, 0, 0, 0, 10.0234, 0, 0, 0, 10.0234, 30, 2.08165e-12, 2.08165e-12)
+mesh = SubResource("BoxMesh_w0vxq")
+surface_material_override/0 = ExtResource("1_piegq")
+
+[node name="MeshInstance3D6" type="MeshInstance3D" parent="."]
+transform = Transform3D(55.8628, 0, 0, 0, 1, 0, 0, 0, 45.7865, 58.5047, 0, 58.6354)
+mesh = SubResource("PlaneMesh_85jf2")
+surface_material_override/0 = SubResource("ShaderMaterial_37fp8")
+
+[node name="MeshInstance3D7" type="MeshInstance3D" parent="."]
+transform = Transform3D(55.8628, 0, 0, 0, 1, 0, 0, 0, 45.7865, -59.4685, 0, 58.6354)
+mesh = SubResource("PlaneMesh_85jf2")
+surface_material_override/0 = SubResource("ShaderMaterial_q5fhl")
