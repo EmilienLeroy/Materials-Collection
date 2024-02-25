@@ -1,0 +1,11 @@
+[gd_resource type="ShaderMaterial" load_steps=3 format=3 uid="uid://bnm6xj4aicokb"]
+
+[ext_resource type="Shader" path="res://shaders/TileTexture.gdshader" id="1_kvimr"]
+[ext_resource type="Texture2D" uid="uid://dpp68hvxf6pln" path="res://assets/Bricks/Bricks_10-512x512.png" id="2_1px4i"]
+
+[resource]
+render_priority = 0
+shader = ExtResource("1_kvimr")
+shader_parameter/non_repetitive = false
+shader_parameter/uv_scale = 1.0
+shader_parameter/albedo = ExtResource("2_1px4i")
